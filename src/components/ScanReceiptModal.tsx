@@ -355,8 +355,8 @@ export default function ScanReceiptModal({
                                             }
                                         </span>
                                     </div>
-                                    <div className="flex items-center gap-3 w-full sm:w-auto sm:self-end">
-                                        <div className="relative w-full sm:w-28 flex-shrink-0">
+                                    <div className="flex items-center gap-3 w-full sm:w-auto sm:self-end justify-between sm:justify-end">
+                                        <div className="relative w-[100px] sm:w-28 flex-shrink-0">
                                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold opacity-40">
                                                 {taxMode === 'dollar' ? '$' : '%'}
                                             </span>
@@ -379,7 +379,7 @@ export default function ScanReceiptModal({
                                             />
                                         </div>
                                         {/* Shown on mobile, hidden on desktop */}
-                                        <span className="sm:hidden text-xs text-foreground/40 font-mono w-16 text-right shrink-0">
+                                        <span className="sm:hidden text-xs text-foreground/40 font-mono w-[60px] text-right shrink-0">
                                             {taxMode === 'dollar'
                                                 ? `${taxPercent.toFixed(1)}%`
                                                 : `$${taxDollar.toFixed(2)}`
@@ -431,29 +431,45 @@ export default function ScanReceiptModal({
                                                 </label>
                                             </div>
                                         </div>
+                                        {/* Hidden on mobile, shown on desktop */}
+                                        <span className="hidden sm:block text-xs text-foreground/40 font-mono w-20 text-right shrink-0 mt-2">
+                                            {tipMode === 'dollar'
+                                                ? `${tipPercent.toFixed(1)}%`
+                                                : `$${tipDollar.toFixed(2)}`
+                                            }
+                                        </span>
                                     </div>
 
-                                    <div className="relative w-full sm:w-28 sm:self-end flex-shrink-0">
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold opacity-40">
-                                            {tipMode === 'dollar' ? '$' : '%'}
+                                    <div className="flex items-center gap-3 w-full sm:w-auto sm:self-end justify-between sm:justify-end">
+                                        <div className="relative w-[100px] sm:w-28 flex-shrink-0">
+                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold opacity-40">
+                                                {tipMode === 'dollar' ? '$' : '%'}
+                                            </span>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                className="input-field py-2 pl-6 pr-3 text-right text-sm font-mono w-full"
+                                                placeholder={tipMode === 'dollar' ? "0.00" : "0"}
+                                                value={tipValue}
+                                                onChange={(e) => setTipValue(e.target.value)}
+                                                onBlur={(e) => {
+                                                    const val = parseFloat(e.target.value);
+                                                    if (!isNaN(val)) {
+                                                        const newVal = Math.max(0, val);
+                                                        setTipValue(tipMode === 'dollar' ? newVal.toFixed(2) : newVal.toString());
+                                                    }
+                                                }}
+                                                onWheel={(e) => e.currentTarget.blur()}
+                                            />
+                                        </div>
+                                        {/* Shown on mobile, hidden on desktop */}
+                                        <span className="sm:hidden text-xs text-foreground/40 font-mono w-[60px] text-right shrink-0">
+                                            {tipMode === 'dollar'
+                                                ? `${tipPercent.toFixed(1)}%`
+                                                : `$${tipDollar.toFixed(2)}`
+                                            }
                                         </span>
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            min="0"
-                                            className="input-field py-2 pl-6 pr-3 text-right text-sm font-mono w-full"
-                                            placeholder={tipMode === 'dollar' ? "0.00" : "0"}
-                                            value={tipValue}
-                                            onChange={(e) => setTipValue(e.target.value)}
-                                            onBlur={(e) => {
-                                                const val = parseFloat(e.target.value);
-                                                if (!isNaN(val)) {
-                                                    const newVal = Math.max(0, val);
-                                                    setTipValue(tipMode === 'dollar' ? newVal.toFixed(2) : newVal.toString());
-                                                }
-                                            }}
-                                            onWheel={(e) => e.currentTarget.blur()}
-                                        />
                                     </div>
                                 </div>
 
