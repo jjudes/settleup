@@ -113,17 +113,32 @@ export default function EventDashboard({ event }: { event: EventWithRelations })
         }
     };
 
+    // Prevent background scrolling when any modal is open
+    const isAnyModalOpen = isAddExpenseOpen || isScanReceiptOpen || isUserManagementOpen || editingExpense !== null || viewingNoteExpense !== null || adjustingSplit !== null;
+
+    useEffect(() => {
+        if (isAnyModalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isAnyModalOpen]);
+
     return (
         <div className="min-h-screen p-6 max-w-5xl mx-auto bg-premium">
             <header className="mb-8 border-b border-border pb-6">
                 {/* Row 1: Event Name, Invite Link, User icon */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                    <h1 className="text-4xl font-bold tracking-tight">{event.name}</h1>
+                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight pr-4 break-words w-full sm:w-auto">{event.name}</h1>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
                         <button
                             onClick={handleCopyLink}
-                            className="bg-primary/10 text-primary-hover py-2.5 px-5 rounded-xl text-sm font-bold border-2 border-primary/20 hover:bg-primary/20 transition-all flex items-center gap-2 shadow-sm"
+                            className="bg-primary/10 text-primary-hover py-2 sm:py-2.5 px-4 sm:px-5 rounded-xl text-xs sm:text-sm font-bold border-2 border-primary/20 hover:bg-primary/20 transition-all flex items-center gap-2 shadow-sm shrink-0"
                         >
                             {copyFeedback ? 'Copied!' : 'Invite Link'}
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
@@ -132,8 +147,8 @@ export default function EventDashboard({ event }: { event: EventWithRelations })
                         </button>
 
                         {currentUser && (
-                            <div className="relative group">
-                                <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-primary to-secondary text-white flex items-center justify-center text-base font-bold shadow-lg border-2 border-background cursor-pointer hover:scale-105 transition-transform">
+                            <div className="relative group shrink-0">
+                                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-tr from-primary to-secondary text-white flex items-center justify-center text-sm sm:text-base font-bold shadow-lg border-2 border-background cursor-pointer hover:scale-105 transition-transform">
                                     {currentUser.name.charAt(0).toUpperCase()}
                                 </div>
                                 <div className="absolute right-0 top-full mt-2 w-max px-3 py-1.5 bg-foreground text-background text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
@@ -145,18 +160,18 @@ export default function EventDashboard({ event }: { event: EventWithRelations })
                 </div>
 
                 {/* Row 2: Add Expense, Add Receipt, Manage Participants */}
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
                     <button
                         onClick={() => setIsAddExpenseOpen(true)}
-                        className="btn-primary"
+                        className="btn-primary py-2 sm:py-3 px-4 sm:px-6 text-sm sm:text-base flex-1 sm:flex-none whitespace-nowrap"
                     >
                         Add Expense
                     </button>
                     <button
                         onClick={() => setIsScanReceiptOpen(true)}
-                        className="btn-accent py-2.5 px-6 flex items-center gap-2 text-sm"
+                        className="btn-accent py-2 sm:py-2.5 px-4 sm:px-6 flex items-center justify-center gap-2 text-xs sm:text-sm flex-1 sm:flex-none whitespace-nowrap"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5 sm:w-4 sm:h-4">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
                         </svg>
                         Add Receipt
@@ -164,10 +179,10 @@ export default function EventDashboard({ event }: { event: EventWithRelations })
                     {isAuthorized && (
                         <button
                             onClick={() => setIsUserManagementOpen(true)}
-                            className="btn-secondary py-2.5 px-6 flex items-center gap-2 text-sm"
+                            className="btn-secondary py-2 sm:py-2.5 px-4 sm:px-6 flex items-center justify-center gap-2 text-xs sm:text-sm w-full sm:w-auto mt-1 sm:mt-0"
                         >
                             Manage Participants
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5 sm:w-4 sm:h-4">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                             </svg>
                         </button>
@@ -202,37 +217,37 @@ export default function EventDashboard({ event }: { event: EventWithRelations })
                                     const canEdit = isAuthorized || expense.creatorId === currentUserId;
 
                                     return (
-                                        <div key={expense.id} className="glass rounded-2xl p-5 flex justify-between items-center bg-surface hover:bg-surface-hover/50 transition-all group border border-transparent hover:border-border">
-                                            <div className="flex items-center gap-5">
-                                                <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex flex-col items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-                                                    <span className="text-xs font-bold uppercase opacity-60">
+                                        <div key={expense.id} className="glass rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-surface hover:bg-surface-hover/50 transition-all group border border-transparent hover:border-border">
+                                            <div className="flex items-center gap-4 sm:gap-5 w-full sm:w-auto">
+                                                <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-primary/10 text-primary rounded-2xl flex flex-col items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                                                    <span className="text-[10px] sm:text-xs font-bold uppercase opacity-60">
                                                         {new Date(expense.date).toLocaleString('default', { month: 'short' })}
                                                     </span>
-                                                    <span className="text-xl font-black leading-none">
+                                                    <span className="text-lg sm:text-xl font-black leading-none">
                                                         {new Date(expense.date).getDate()}
                                                     </span>
                                                 </div>
-                                                <div>
-                                                    <h4 className="font-bold text-lg">{expense.name}</h4>
-                                                    <p className="text-sm text-foreground/60">
-                                                        Paid by <span className="font-bold text-foreground">{expense.creator.name}</span>
-                                                        {expense.splitWithEveryone && <span className="ml-2 text-[10px] bg-secondary/10 text-secondary px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Group Split</span>}
-                                                        {(expense as any).unclaimed && <span className="ml-2 text-[10px] bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider animate-pulse">Unclaimed</span>}
+                                                <div className="min-w-0 flex-1">
+                                                    <h4 className="font-bold text-base sm:text-lg truncate">{expense.name}</h4>
+                                                    <p className="text-xs sm:text-sm text-foreground/60 flex flex-wrap items-center gap-1.5 mt-0.5">
+                                                        <span>Paid by <span className="font-bold text-foreground">{expense.creator.name}</span></span>
+                                                        {expense.splitWithEveryone && <span className="text-[9px] sm:text-[10px] bg-secondary/10 text-secondary px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider whitespace-nowrap">Group Split</span>}
+                                                        {(expense as any).unclaimed && <span className="text-[9px] sm:text-[10px] bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider animate-pulse whitespace-nowrap">Unclaimed</span>}
                                                     </p>
                                                     {expense.notes && (
-                                                        <div className="mt-1 flex items-baseline gap-2">
-                                                            <p className="text-xs text-foreground/70 italic border-l-2 border-primary/30 pl-2 py-0.5">
-                                                                "{(expense.notes.length > 60 || expense.notes.includes('\n'))
-                                                                    ? expense.notes.split('\n')[0].substring(0, 60) + '...'
+                                                        <div className="mt-1.5 flex items-baseline gap-2">
+                                                            <p className="text-[11px] sm:text-xs text-foreground/70 italic border-l-2 border-primary/30 pl-2 py-0.5 truncate">
+                                                                "{(expense.notes.length > 50 || expense.notes.includes('\n'))
+                                                                    ? expense.notes.split('\n')[0].substring(0, 50) + '...'
                                                                     : expense.notes}"
                                                             </p>
-                                                            {(expense.notes.length > 60 || expense.notes.includes('\n')) && (
+                                                            {(expense.notes.length > 50 || expense.notes.includes('\n')) && (
                                                                 <button
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
                                                                         setViewingNoteExpense(expense);
                                                                     }}
-                                                                    className="text-[10px] font-bold text-primary hover:underline hover:text-primary-hover whitespace-nowrap"
+                                                                    className="text-[10px] font-bold text-primary hover:underline hover:text-primary-hover whitespace-nowrap shrink-0"
                                                                 >
                                                                     See more
                                                                 </button>
@@ -241,13 +256,13 @@ export default function EventDashboard({ event }: { event: EventWithRelations })
                                                     )}
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-4 relative z-10 pl-4">
-                                                <div className="text-right">
-                                                    <span className="font-bold text-lg block">${expense.amount.toFixed(2)}</span>
+                                            <div className="flex w-full sm:w-auto mt-4 sm:mt-0 items-center justify-between sm:justify-end gap-3 sm:gap-4 relative z-10 sm:pl-4 border-t sm:border-0 border-border/50 pt-4 sm:pt-0">
+                                                <div className="text-left sm:text-right">
+                                                    <span className="font-bold text-base sm:text-lg block">${expense.amount.toFixed(2)}</span>
                                                     <span className="text-[10px] text-foreground/40">{expense.participants.length} involved</span>
                                                 </div>
 
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-1.5 sm:gap-2 shrink-0">
                                                     {(() => {
                                                         const isParticipant = currentUserId ? expense.participants.some(p => p.userId === currentUserId) : false;
                                                         const amounts = expense.participants.map(p => p.amountOwed);
@@ -363,18 +378,20 @@ export default function EventDashboard({ event }: { event: EventWithRelations })
                             <div className="space-y-4">
                                 {payments.map((p, idx) => (
                                     <div key={idx} className="flex flex-col gap-2 p-3 rounded-xl bg-surface-hover/30 border border-border/50">
-                                        <div className="flex items-center justify-between text-sm">
-                                            <span className="font-bold text-foreground">
-                                                {p.from}
-                                                {currentUser?.name === p.from && <span className="ml-1.5 inline-block align-middle text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-[4px] font-black uppercase tracking-tighter">Me</span>}
-                                            </span>
-                                            <span className="text-foreground/40 font-medium mx-2">owes</span>
-                                            <span className="font-bold text-primary">
-                                                {p.to}
-                                                {currentUser?.name === p.to && <span className="ml-1.5 inline-block align-middle text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-[4px] font-black uppercase tracking-tighter">Me</span>}
-                                            </span>
+                                        <div className="flex flex-wrap items-center justify-between text-sm gap-2">
+                                            <div className="flex items-center min-w-0">
+                                                <span className="font-bold text-foreground truncate">
+                                                    {p.from}
+                                                    {currentUser?.name === p.from && <span className="ml-1.5 inline-block align-middle text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-[4px] font-black uppercase tracking-tighter">Me</span>}
+                                                </span>
+                                                <span className="text-foreground/40 font-medium mx-1.5 sm:mx-2 shrink-0">owes</span>
+                                                <span className="font-bold text-primary truncate">
+                                                    {p.to}
+                                                    {currentUser?.name === p.to && <span className="ml-1.5 inline-block align-middle text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-[4px] font-black uppercase tracking-tighter">Me</span>}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="text-2xl font-black text-foreground">
+                                        <div className="text-xl sm:text-2xl font-black text-foreground">
                                             ${p.amount.toFixed(2)}
                                         </div>
                                     </div>
@@ -384,32 +401,32 @@ export default function EventDashboard({ event }: { event: EventWithRelations })
                     </section>
 
                     <section className="glass rounded-3xl p-6">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold">Participants</h2>
-                            <span className="bg-foreground/5 text-foreground/60 text-xs px-2 py-1 rounded-md font-bold">{event.users.length} total</span>
+                        <div className="flex justify-between items-center mb-6 gap-2">
+                            <h2 className="text-xl font-bold truncate">Participants</h2>
+                            <span className="bg-foreground/5 text-foreground/60 text-[10px] sm:text-xs px-2 py-1 rounded-md font-bold shrink-0">{event.users.length} total</span>
                         </div>
 
                         <ul className="space-y-4">
                             {event.users.map(user => {
                                 const summary = summaries[user.id];
                                 return (
-                                    <li key={user.id} className="flex items-center justify-between group">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary to-secondary text-white flex items-center justify-center text-sm font-bold shadow-md shadow-primary/20 transform transition-transform group-hover:scale-110">
+                                    <li key={user.id} className="flex flex-wrap sm:flex-nowrap items-center justify-between group gap-3">
+                                        <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto">
+                                            <div className="w-10 h-10 shrink-0 rounded-2xl bg-gradient-to-tr from-primary to-secondary text-white flex items-center justify-center text-sm font-bold shadow-md shadow-primary/20 transform transition-transform group-hover:scale-110">
                                                 {user.name.charAt(0).toUpperCase()}
                                             </div>
-                                            <div>
-                                                <div className="flex items-center gap-1.5">
-                                                    <p className="font-bold text-sm">{user.name}</p>
-                                                    {user.id === currentUserId && <span className="text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-[4px] font-black uppercase tracking-tighter">Me</span>}
-                                                    {user.role === 'Owner' && <span className="text-[8px] bg-amber-500 text-white px-1.5 py-0.5 rounded-sm font-black uppercase tracking-tighter">Owner</span>}
-                                                    {user.role === 'Admin' && <span className="text-[8px] bg-cyan-600 text-white px-1.5 py-0.5 rounded-sm font-black uppercase tracking-tighter">Admin</span>}
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex flex-wrap items-center gap-1.5">
+                                                    <p className="font-bold text-sm truncate max-w-[120px] sm:max-w-[200px]">{user.name}</p>
+                                                    {user.id === currentUserId && <span className="text-[9px] shrink-0 bg-primary/20 text-primary px-1.5 py-0.5 rounded-[4px] font-black uppercase tracking-tighter">Me</span>}
+                                                    {user.role === 'Owner' && <span className="text-[8px] shrink-0 bg-amber-500 text-white px-1.5 py-0.5 rounded-sm font-black uppercase tracking-tighter">Owner</span>}
+                                                    {user.role === 'Admin' && <span className="text-[8px] shrink-0 bg-cyan-600 text-white px-1.5 py-0.5 rounded-sm font-black uppercase tracking-tighter">Admin</span>}
                                                 </div>
-                                                <p className="text-[10px] text-foreground/50 font-bold uppercase">Net: <span className={summary.net >= 0 ? 'text-secondary' : 'text-accent'}>${summary.net.toFixed(2)}</span></p>
+                                                <p className="text-[10px] text-foreground/50 font-bold uppercase mt-0.5">Net: <span className={summary.net >= 0 ? 'text-secondary' : 'text-accent'}>${summary.net.toFixed(2)}</span></p>
                                             </div>
                                         </div>
-                                        <div className="text-right flex flex-col items-end gap-1">
-                                            <span className="block text-xs font-bold">${summary.paid > 0 ? summary.paid.toFixed(0) : '0'} paid</span>
+                                        <div className="text-left flex flex-row items-center gap-1 w-full sm:w-auto sm:justify-end sm:flex-col sm:items-end sm:text-right pl-14 sm:pl-0 -mt-1 sm:mt-0">
+                                            <span className="block text-[11px] sm:text-xs font-bold text-foreground/60">${summary.paid > 0 ? summary.paid.toFixed(0) : '0'} paid</span>
                                         </div>
                                     </li>
                                 );
@@ -458,7 +475,7 @@ export default function EventDashboard({ event }: { event: EventWithRelations })
 
             {viewingNoteExpense && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="glass w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                    <div className="bg-surface w-full max-w-md rounded-3xl shadow-2xl overflow-hidden overflow-x-hidden flex flex-col max-h-[90vh]">
                         <div className="flex justify-between items-center p-6 border-b border-border">
                             <h2 className="text-xl font-bold">Expense Note</h2>
                             <button

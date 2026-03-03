@@ -123,7 +123,7 @@ export default function AdjustSplitModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="glass w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="bg-surface w-full max-w-md rounded-3xl shadow-2xl overflow-hidden overflow-x-hidden flex flex-col max-h-[90vh]">
                 {/* Header */}
                 <div className="flex justify-between items-center p-6 border-b border-border">
                     <div>
@@ -158,19 +158,21 @@ export default function AdjustSplitModal({
                             Amount per person
                         </label>
                         {participantUsers.map(user => (
-                            <div key={user.id} className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-secondary text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
-                                    {user.name.charAt(0).toUpperCase()}
+                            <div key={user.id} className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3">
+                                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-[120px]">
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-secondary text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                                        {user.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    <span className="text-sm font-bold flex-1 truncate">
+                                        {user.name}
+                                        {user.id === currentUserId && (
+                                            <span className="ml-1.5 text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-[4px] font-black uppercase tracking-tighter">
+                                                {action === 'join' ? 'New' : 'Leaving'}
+                                            </span>
+                                        )}
+                                    </span>
                                 </div>
-                                <span className="text-sm font-bold flex-1 truncate">
-                                    {user.name}
-                                    {user.id === currentUserId && (
-                                        <span className="ml-1.5 text-[9px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-[4px] font-black uppercase tracking-tighter">
-                                            {action === 'join' ? 'New' : 'Leaving'}
-                                        </span>
-                                    )}
-                                </span>
-                                <div className="relative w-28">
+                                <div className="relative w-full sm:w-28 mt-1 sm:mt-0">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 font-bold text-sm">$</span>
                                     <input
                                         type="number"
@@ -183,7 +185,7 @@ export default function AdjustSplitModal({
                                             if (!isNaN(val)) setAmounts(prev => ({ ...prev, [user.id]: Math.max(0, val).toFixed(2) }));
                                         }}
                                         onWheel={(e) => e.currentTarget.blur()}
-                                        className="input-field text-right pl-8 py-2 text-sm"
+                                        className="input-field text-right pl-8 py-2 text-sm w-full"
                                         placeholder="0.00"
                                     />
                                 </div>

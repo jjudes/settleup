@@ -125,7 +125,7 @@ export default function AddExpenseModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="glass w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="bg-surface w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden overflow-x-hidden flex flex-col max-h-[90vh]">
                 <div className="flex justify-between items-center p-6 border-b border-border">
                     <h2 className="text-xl font-bold">{expense ? 'Edit Expense' : 'Add an Expense'}</h2>
                     <button
@@ -140,7 +140,7 @@ export default function AddExpenseModal({
 
                 <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6">
                     <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium mb-1.5 ml-1">Description</label>
                                 <input
