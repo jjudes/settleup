@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Event {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  
+  users     User[]
+  expenses  Expense[]
+}
+
+model User {
+  id        String    @id @default(uuid())
+  eventId   String
+  name      String
+  role      String    @default("User") // 'Owner', 'Admin', 'User'
+  
+  event     Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  expensesCreated Expense[] @relation("ExpenseCreator")
+  expensesPaid    ExpensePayer[]
+  expensesOwed    ExpenseParticipant[]
+
+  @@unique([eventId, name]) // Names must be unique within an event
+}
+
+model Expense {
+  id                String    @id @default(uuid())
+  eventId           String
+  creatorId         String
+  name              String
+  amount            Float
+  splitWithEveryone Boolean   @default(true)
+  date              DateTime  @default(now())
+  notes             String?   
+  unclaimed         Boolean   @default(false)
+  
+  event             Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  creator           User      @relation("ExpenseCreator", fields: [creatorId], references: [id])
+  
+  payers            ExpensePayer[]
+  participants      ExpenseParticipant[]
+}
+
+model ExpensePayer {
+  id          String   @id @default(uuid())
+  expenseId   String
+  userId      String
+  amountPaid  Float
+  
+  expense     Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([expenseId, userId]) // A user can only be a payer once per expense
+}
+
+model ExpenseParticipant {
+  id          String   @id @default(uuid())
+  expenseId   String
+  userId      String
+  amountOwed  Float
+  
+  expense     Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([expenseId, userId]) // A user can only be a participant once per expense
+}
